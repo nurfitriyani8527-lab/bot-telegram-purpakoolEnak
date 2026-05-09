@@ -1,3 +1,17 @@
+const express = require('express');
+const app = express();
+
+// Menghindari error saat UptimeRobot memanggil URL Anda
+app.get('/', (req, res) => {
+  res.send('Bot is active!');
+});
+
+// Port otomatis dari Render atau default 10000
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`Keep-alive server is running on port ${PORT}`);
+});
+
 require("dotenv").config();
 
 const { TelegramClient } = require("telegram");
