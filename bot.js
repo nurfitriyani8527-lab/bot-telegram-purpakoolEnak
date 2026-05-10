@@ -93,17 +93,16 @@ async function main() {
                     messages: [messageId],
                     fromPeer: channelEntity
                 });
-                
-                console.log("Kirim ke:", grp);
+
+                console.log("Forward ke:", grp);
                 await delay(25000);
             }
-            console.log("Loop lagi 15 detik...");
-            await delay(15000);
         }
-
         } catch (err) {
             console.log("ERROR FULL:", err);
         }
+            console.log("Loop lagi 15 detik...");
+            await delay(15000);
 
     }, new NewMessage({ incoming: true, outgoing: true }));
 
