@@ -95,7 +95,7 @@ async function main() {
                 });
 
                 console.log("Forward ke:", grp);
-                await delay(25000);
+                await delay(35000);
             }
         }
         } catch (err) {
