@@ -60,7 +60,6 @@ async function main() {
 
         if (sender.toString() !== MY_ID) return;
         
-
         console.log("Masuk:", msg);
 
         if (msg === "/stop") {
@@ -90,14 +89,11 @@ async function main() {
 
                 const groupEntity = await client.getEntity(grp);
 
-                const messages = await client.getMessages(channelEntity, {
-                    ids: messageId
+                await client.forwardMessages(groupEntity, {
+                    messages: [messageId],
+                    fromPeer: channelEntity
                 });
-
-                await client.sendMessage(groupEntity, {
-                    message: messages[0].message,
-                });
-
+                
                 console.log("Kirim ke:", grp);
                 await delay(25000);
             }
