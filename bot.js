@@ -43,6 +43,11 @@ const delay = (ms) => new Promise(res => setTimeout(res, ms));
 const runningUsers = {};
 
 async function main() {
+    // await client.start({
+    //     phoneNumber: async () => await input.text("Nomor: "),
+    //     password: async () => await input.text("Password: "),
+    //     phoneCode: async () => await input.text("OTP: "),
+    // });
 
     await client.connect();
     console.log("Client connected 🚀");
