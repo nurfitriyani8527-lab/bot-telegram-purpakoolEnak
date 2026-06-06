@@ -97,13 +97,13 @@ async function main() {
                     });
 
                     console.log("Forward ke:", grp);
-                    await delay(15000);
+                    await delay(100000);
             }
         }
         } catch (err) {
             console.log("ERROR FULL:", err);
         }
-            console.log("Loop lagi 15 detik...");
+            console.log("Loop lagi 2 menit...");
             await delay(120000);
 
     }, new NewMessage({ incoming: true, outgoing: true }));
