@@ -40,7 +40,7 @@ const groups = [
 ];
 
 const delay = (ms) => new Promise(res => setTimeout(res, ms));
-let isRunning = false;
+const runningUsers = {};
 
 async function main() {
 
@@ -62,14 +62,21 @@ async function main() {
         
         console.log("Masuk:", msg);
 
+        const userId = sender.toString();
+
         if (msg === "/stop") {
-            isRunning = false;
+            delete runningUsers[userId];
             console.log("STOP!");
             return;
         }
 
+        if (runningUsers[userId]) {
+            console.log("Loop sudah berjalan untuk user ini");
+            return;
+        }
+
         if (!msg.includes("t.me")) return;
-        isRunning = true;
+        runningUsers[userId] = true;
 
         try {
             const match = msg.match(/t\.me\/([\w\d_]+)\/(\d+)/);
@@ -83,7 +90,7 @@ async function main() {
 
             const channelEntity = await client.getEntity(channel);
 
-            while (isRunning) {
+            while (runningUsers[userId] === true) {
 
                 console.log("Masuk while");
 
@@ -97,7 +104,7 @@ async function main() {
                     });
 
                     console.log("Forward ke:", grp);
-                    await delay(100000);
+                    await delay(80000);
             }
         }
         } catch (err) {
