@@ -85,17 +85,19 @@ async function main() {
 
             while (isRunning) {
 
+                console.log("Masuk while");
+
                 for (const grp of groups) {
+                    console.log("Coba grup:", grp);
+                    const groupEntity = await client.getEntity(grp);
 
-                const groupEntity = await client.getEntity(grp);
+                    await client.forwardMessages(groupEntity, {
+                        messages: [messageId],
+                        fromPeer: channelEntity
+                    });
 
-                await client.forwardMessages(groupEntity, {
-                    messages: [messageId],
-                    fromPeer: channelEntity
-                });
-
-                console.log("Forward ke:", grp);
-                await delay(35000);
+                    console.log("Forward ke:", grp);
+                    await delay(35000);
             }
         }
         } catch (err) {
