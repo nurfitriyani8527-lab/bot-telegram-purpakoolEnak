@@ -46,6 +46,7 @@ async function main() {
 
     await client.connect();
     console.log("Client connected 🚀");
+    console.log("Me:", await client.getMe());
 
     console.log("Login berhasil!");
 
@@ -91,7 +92,7 @@ async function main() {
             const channelEntity = await client.getEntity(channel);
 
             while (runningUsers[userId] === true) {
-
+                console.log("LOOP AKTIF:", userId, new Date().toLocaleTimeString());
                 console.log("Masuk while");
 
                 for (const grp of groups) {
@@ -104,14 +105,17 @@ async function main() {
                     });
 
                     console.log("Forward ke:", grp);
-                    await delay(80000);
+                    await delay(35000);
+                    console.log("tunggu 35 detik...");
             }
-        }
-        } catch (err) {
-            console.log("ERROR FULL:", err);
-        }
             console.log("Loop lagi 2 menit...");
-            await delay(120000);
+            await delay(180000);
+            }
+            } catch (err) {
+                console.log("ERROR USER:", userId);
+                console.log(err);
+                delete runningUsers[userId];
+            }
 
     }, new NewMessage({ incoming: true, outgoing: true }));
 
