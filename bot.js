@@ -57,9 +57,9 @@ async function main() {
         const msg = event.message.message;
 
         console.log("Sender ID:", sender.toString());
-        const ALLOWED_IDS = process.env.ALLOWED_IDS.split(",");
+        const USER_IDS = process.env.USER_IDS.split(",");
 
-        if (!ALLOWED_IDS.includes(sender.toString())) return;
+        if (!USER_IDS.includes(sender.toString())) return;
         
         console.log("Masuk:", msg);
 
