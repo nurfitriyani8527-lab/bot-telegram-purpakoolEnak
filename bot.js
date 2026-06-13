@@ -22,10 +22,7 @@ const fs = require("fs");
 const apiId = Number(process.env.API_ID);
 const apiHash = process.env.API_HASH;
 
-let sessionData = "";
-if (fs.existsSync("session.txt")) {
-    sessionData = fs.readFileSync("session.txt", "utf8");
-}
+const sessionData = process.env.SESSION || "";
 
 const client = new TelegramClient(
     new StringSession(sessionData),
@@ -43,22 +40,21 @@ const delay = (ms) => new Promise(res => setTimeout(res, ms));
 const runningUsers = {};
 
 async function main() {
-    await client.start({
-        phoneNumber: async () => await input.text("Nomor: "),
-        password: async () => await input.text("Password: "),
-        phoneCode: async () => await input.text("OTP: "),
-    });
-
+    // await client.start({
+    //     phoneNumber: async () => await input.text("Nomor: "),
+    //     password: async () => await input.text("Password: "),
+    //     phoneCode: async () => await input.text("OTP: "),
+    // });
+    console.log(client.session.save());
     console.log("Session exists:", fs.existsSync("session.txt"));
     console.log("Session length:", sessionData.length);
+
 
     await client.connect();
     console.log("Client connected 🚀");
     console.log("Me:", await client.getMe());
 
     console.log("Login berhasil!");
-
-    fs.writeFileSync("session.txt", client.session.save());
 
     client.addEventHandler(async (event) => {
         const sender = event.message.senderId;
