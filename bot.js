@@ -22,6 +22,11 @@ const fs = require("fs");
 const apiId = Number(process.env.API_ID);
 const apiHash = process.env.API_HASH;
 
+console.log("API_ID:", process.env.API_ID ? "ADA" : "KOSONG");
+console.log("API_HASH:", process.env.API_HASH ? "ADA" : "KOSONG");
+console.log("SESSION:", process.env.SESSION ? "ADA" : "KOSONG");
+console.log("USER_IDS:", process.env.USER_IDS ? "ADA" : "KOSONG");
+
 const sessionData = process.env.SESSION || "";
 
 const client = new TelegramClient(
