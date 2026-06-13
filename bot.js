@@ -53,6 +53,8 @@ async function main() {
     console.log("Client connected 🚀");
     console.log("Me:", await client.getMe());
 
+    console.log("Session exists:", fs.existsSync("session.txt"));
+
     console.log("Login berhasil!");
 
     fs.writeFileSync("session.txt", client.session.save());
