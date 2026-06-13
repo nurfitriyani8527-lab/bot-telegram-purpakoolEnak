@@ -114,7 +114,7 @@ async function main() {
                     console.log("tunggu 35 detik...");
             }
             console.log("Loop lagi 7 menit...");
-            await delay(420000); // 180000 3 menit +1 menit buffer
+            await delay(300000); // 180000 3 menit +1 menit buffer
             }
             } catch (err) {
                 console.log("ERROR USER:", userId);
