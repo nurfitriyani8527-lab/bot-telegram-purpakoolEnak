@@ -54,7 +54,6 @@ async function main() {
     console.log("Session exists:", fs.existsSync("session.txt"));
     console.log("Session length:", sessionData.length);
 
-
     await client.connect();
     console.log("Client connected 🚀");
     console.log("Me:", await client.getMe());
@@ -114,11 +113,11 @@ async function main() {
                     });
 
                     console.log("Forward ke:", grp);
-                    await delay(35000);
+                    await delay(25000);
                     console.log("tunggu 35 detik...");
             }
             console.log("Loop lagi 7 menit...");
-            await delay(540000); // 180000 3 menit +1 menit buffer
+            await delay(480000); // 1 menit = 60000 jadi untuk sekarang adalah 9 menit = 540000 
             }
             } catch (err) {
                 console.log("ERROR USER:", userId);
