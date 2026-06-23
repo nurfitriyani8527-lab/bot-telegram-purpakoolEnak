@@ -56,7 +56,7 @@ async function main() {
 
     await client.connect();
     console.log("Client connected 🚀");
-    console.log("Me:", await client.getMe());
+    // console.log("Me:", await client.getMe());
 
     console.log("Login berhasil!");
 
@@ -74,15 +74,17 @@ async function main() {
         const userId = sender.toString();
 
         if (msg === "/stop") {
+            console.log("STOP DARI:", userId);
             delete runningUsers[userId];
-            console.log("STOP!");
-            return;
+            console.log("RUNNING USERS:", runningUsers);
+        return;
         }
 
-        if (runningUsers[userId]) {
-            console.log("Loop sudah berjalan untuk user ini");
-            return;
+        while (runningUsers[userId] === true) {
+            console.log("START:", userId);
+            console.log("RUNNING USERS:", runningUsers);
         }
+
 
         if (!msg.includes("t.me")) return;
         runningUsers[userId] = true;
