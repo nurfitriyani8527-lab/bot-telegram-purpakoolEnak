@@ -120,7 +120,7 @@ async function main() {
                     console.log("tunggu 35 detik...");
             }
             console.log("Loop lagi 7 menit...");
-            await delay(480000); // 1 menit = 60000 jadi untuk sekarang adalah 9 menit = 540000 
+            await delay(600000); // 1 menit = 60000 jadi untuk sekarang adalah 9 menit = 540000 
             }
             } catch (err) {
                 console.log("ERROR USER:", userId);
