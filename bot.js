@@ -77,12 +77,12 @@ async function main() {
             console.log("STOP DARI:", userId);
             delete runningUsers[userId];
             console.log("RUNNING USERS:", runningUsers);
-
-        return;
+            return;
         }
 
-        while (runningUsers[userId] === true) {
-            console.log("LOOP USER:", userId);
+        if (runningUsers[userId]) {
+            console.log("Loop sudah berjalan untuk:", userId);
+            return;
         }
 
         if (!msg.includes("t.me")) return;
