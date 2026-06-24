@@ -77,17 +77,18 @@ async function main() {
             console.log("STOP DARI:", userId);
             delete runningUsers[userId];
             console.log("RUNNING USERS:", runningUsers);
+
         return;
         }
 
         while (runningUsers[userId] === true) {
-            console.log("START:", userId);
-            console.log("RUNNING USERS:", runningUsers);
+            console.log("LOOP USER:", userId);
         }
-
 
         if (!msg.includes("t.me")) return;
         runningUsers[userId] = true;
+        console.log("START:", userId);
+        console.log("RUNNING USERS:", runningUsers);
 
         try {
             const match = msg.match(/t\.me\/([\w\d_]+)\/(\d+)/);
