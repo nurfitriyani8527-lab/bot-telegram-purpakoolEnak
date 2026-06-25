@@ -79,7 +79,6 @@ async function main() {
             if (!runningUsers[userId]) {
                 await event.message.reply({
                     message: `Bot off
-                    
                     ⏱  Delay: ${delayLoop / 60000} menit
                     🔗 Source: ${status?.source || "-"}
                     👥 Target: ${targetList}
@@ -89,7 +88,6 @@ async function main() {
             }
             await event.message.reply({
         message: `Bot on
-            
         ⏱  Delay: ${delayLoop / 60000} menit
         🔗 Source: ${status?.source || "-"}
         👥 Target: ${targetList}
@@ -177,11 +175,11 @@ async function main() {
                             hour12: false
                         })
                     );
-                if (jakartaHour === 0) {
+                if (jakartaHour >= 0 && jakartaHour < 7) {
                     delete runningUsers[userId];
                     console.log("STOP OTOMATIS JAM 00");
                     await event.message.reply({
-                        message: "🛑 Bot berhenti otomatis karena sudah jam 00:00 WIB"
+                        message: "Bot berhenti otomatis karena sudah jam 12 malam dan akan kembali share di jam 7 pagi!"
                     });
                     break;
                 }
