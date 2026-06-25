@@ -78,12 +78,17 @@ async function main() {
             const targetList = groups.map(g => `• ${g}`).join("\n");
             if (!runningUsers[userId]) {
                 await event.message.reply({
-                    message: "Bot OFF"
+                    message: `Bot off
+                    
+                    ⏱  Delay: ${delayLoop / 60000} menit
+                    🔗 Source: ${status?.source || "-"}
+                    👥 Target: ${targetList}
+                    👤 Running : ${Object.keys(runningUsers).length} user`
                 })
                 return;
             }
             await event.message.reply({
-        message: `Bot ON
+        message: `Bot on
             
         ⏱  Delay: ${delayLoop / 60000} menit
         🔗 Source: ${status?.source || "-"}
@@ -144,29 +149,44 @@ async function main() {
             const channelEntity = await client.getEntity(channel);
 
             while (runningUsers[userId] === true) {
-                const hour = new Date().getHours();
-                if (hour === 0) {
-                    console.log("Jam 12 malam, stop otomatis");
+                const jakartaHour = Number(
+                    new Date().toLocaleString("en-US", {
+                        timeZone: "Asia/Jakarta",
+                        hour: "numeric",
+                        hour12: false
+                    })
+                );
+                if (jakartaHour === 0) {
                     delete runningUsers[userId];
+                    console.log("STOP OTOMATIS JAM 00");
                     break;
                 }
-                console.log("LOOP AKTIF:", userId, new Date().toLocaleTimeString());
-                console.log("Masuk while");
-
                 for (const grp of groups) {
-                    console.log("Coba grup:", grp);
                     const groupEntity = await client.getEntity(grp);
-
                     await client.forwardMessages(groupEntity, {
                         messages: [messageId],
                         fromPeer: channelEntity
                     });
-
-                    console.log("Forward ke:", grp);
                     await delay(25000);
-                    console.log("tunggu 35 detik...");
-            }
-            await delay(delayLoop); // 1 menit = 60000 jadi untuk sekarang adalah 9 menit = 540000 
+                }
+                for (let i = 0; i < delayLoop / 60000; i++) {
+                    const jakartaHour = Number(
+                        new Date().toLocaleString("en-US", {
+                            timeZone: "Asia/Jakarta",
+                            hour: "numeric",
+                            hour12: false
+                        })
+                    );
+                if (jakartaHour === 0) {
+                    delete runningUsers[userId];
+                    console.log("STOP OTOMATIS JAM 00");
+                    await event.message.reply({
+                        message: "🛑 Bot berhenti otomatis karena sudah jam 00:00 WIB"
+                    });
+                    break;
+                }
+                    await delay(60000);
+                }
             }
             } catch (err) {
                 console.log("ERROR USER:", userId);
@@ -178,5 +198,4 @@ async function main() {
 
     console.log("Bot siap 🔥 kirim link ke akun ini sendiri");
 }
-
 main();
