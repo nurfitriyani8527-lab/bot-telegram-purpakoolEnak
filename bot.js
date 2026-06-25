@@ -2,12 +2,10 @@ require("dotenv").config();
 const express = require('express');
 const app = express();
 
-// Menghindari error saat UptimeRobot memanggil URL Anda
 app.get('/', (req, res) => {
   res.send('Bot is active!');
 });
 
-// Port otomatis dari Render atau default 10000
 const PORT = process.env.PORT || process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Keep-alive server is running on port ${PORT}`);
@@ -43,6 +41,8 @@ const groups = [
 
 const delay = (ms) => new Promise(res => setTimeout(res, ms));
 const runningUsers = {};
+const userStatus = {};
+let delayLoop = 480000;
 
 async function main() {
     // await client.start({
@@ -50,7 +50,7 @@ async function main() {
     //     password: async () => await input.text("Password: "),
     //     phoneCode: async () => await input.text("OTP: "),
     // });
-    console.log(client.session.save());
+    // console.log(client.session.save());
     console.log("Session exists:", fs.existsSync("session.txt"));
     console.log("Session length:", sessionData.length);
 
@@ -72,6 +72,40 @@ async function main() {
         console.log("Masuk:", msg);
 
         const userId = sender.toString();
+
+        if (msg === "/status") {
+            const status = userStatus[userId];
+            const targetList = groups.map(g => `• ${g}`).join("\n");
+            if (!runningUsers[userId]) {
+                await event.message.reply({
+                    message: "Bot OFF"
+                })
+                return;
+            }
+            await event.message.reply({
+        message: `Bot ON
+            
+        ⏱  Delay: ${delayLoop / 60000} menit
+        🔗 Source: ${status?.source || "-"}
+        👥 Target: ${targetList}
+        👤 Running : ${Object.keys(runningUsers).length} user`
+        });
+            return;
+        }
+
+        if (msg.startsWith("/delay ")) {
+            if (userId !== process.env.OWNER_ID) {
+                console.log("Bukan owner");
+                return;
+            }
+            const menit = parseInt(msg.split(" ")[1]);
+            if (isNaN(menit)) return;
+            delayLoop = menit * 60000;
+            await event.message.reply({
+                message: `Delay diubah menjadi ${menit} menit`
+            });
+            return;
+        }
 
         if (msg === "/stop") {
             console.log("STOP DARI:", userId);
@@ -100,9 +134,22 @@ async function main() {
             console.log("channel:", channel);
             console.log("id:", messageId);
 
+            userStatus[userId] = {
+                source: msg,
+                channel,
+                messageId,
+                startedAt: new Date()
+            };
+
             const channelEntity = await client.getEntity(channel);
 
             while (runningUsers[userId] === true) {
+                const hour = new Date().getHours();
+                if (hour === 0) {
+                    console.log("Jam 12 malam, stop otomatis");
+                    delete runningUsers[userId];
+                    break;
+                }
                 console.log("LOOP AKTIF:", userId, new Date().toLocaleTimeString());
                 console.log("Masuk while");
 
@@ -119,8 +166,7 @@ async function main() {
                     await delay(25000);
                     console.log("tunggu 35 detik...");
             }
-            console.log("Loop lagi 7 menit...");
-            await delay(600000); // 1 menit = 60000 jadi untuk sekarang adalah 9 menit = 540000 
+            await delay(delayLoop); // 1 menit = 60000 jadi untuk sekarang adalah 9 menit = 540000 
             }
             } catch (err) {
                 console.log("ERROR USER:", userId);
