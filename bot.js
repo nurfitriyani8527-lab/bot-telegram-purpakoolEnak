@@ -73,6 +73,21 @@ async function main() {
 
         const userId = sender.toString();
 
+        const jakartaHour = Number(
+        new Date().toLocaleString("en-US", {
+            timeZone: "Asia/Jakarta",
+            hour: "numeric",
+            hour12: false
+        })
+        );
+
+        if (jakartaHour >= 0 && jakartaHour < 7) {
+            await event.message.reply({
+                message: "Bot sedang offline otomatis (00:00 - 07:00 WIB). Silakan kirim link lagi setelah jam 07:00."
+            });
+            return;
+        }
+
         if (msg === "/status") {
             const status = userStatus[userId];
             const targetList = groups.map(g => `• ${g}`).join("\n");
@@ -154,9 +169,12 @@ async function main() {
                         hour12: false
                     })
                 );
-                if (jakartaHour === 0) {
+                
+                if (jakartaHour >= 0 && jakartaHour < 7) {
                     delete runningUsers[userId];
-                    console.log("STOP OTOMATIS JAM 00");
+                    await event.message.reply({
+                        message: "Bot berhenti otomatis karena sudah masuk jam offline (00:00 - 07:00 WIB)."
+                    });
                     break;
                 }
                 for (const grp of groups) {
