@@ -81,13 +81,6 @@ async function main() {
         })
         );
 
-        if (jakartaHour >= 0 && jakartaHour < 7) {
-            await event.message.reply({
-                message: "Bot sedang offline otomatis (00:00 - 07:00 WIB). Silakan kirim link lagi setelah jam 07:00."
-            });
-            return;
-        }
-
         if (msg === "/status") {
             const status = userStatus[userId];
             const targetList = groups.map(g => `• ${g}`).join("\n");
@@ -129,6 +122,21 @@ async function main() {
             console.log("STOP DARI:", userId);
             delete runningUsers[userId];
             console.log("RUNNING USERS:", runningUsers);
+            return;
+        }
+
+        const jakartaHour = Number(
+            new Date().toLocaleString("en-US", {
+                timeZone: "Asia/Jakarta",
+                hour: "numeric",
+                hour12: false
+            })
+        );     
+        
+        if (jakartaHour >= 0 && jakartaHour < 7) {
+            await event.message.reply({
+                message: "Bot sedang offline otomatis (00:00 - 07:00 WIB). Silakan kirim link lagi setelah jam 07:00."
+            });
             return;
         }
 
