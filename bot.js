@@ -178,6 +178,10 @@ async function main() {
                     break;
                 }
                 for (const grp of groups) {
+                    if (!runningUsers[userId]) {
+                        console.log("STOP saat proses forward");
+                        break;
+                    }
                     const groupEntity = await client.getEntity(grp);
                     await client.forwardMessages(groupEntity, {
                         messages: [messageId],
@@ -185,7 +189,16 @@ async function main() {
                     });
                     await delay(25000);
                 }
+                if (!runningUsers[userId]) {
+                    console.log("STOP saat proses forward");
+                    break;
+                }
                 for (let i = 0; i < delayLoop / 60000; i++) {
+                    if (!runningUsers[userId]) {
+                        console.log("STOP saat delay");
+                        break;
+                    }
+
                     const jakartaHour = Number(
                         new Date().toLocaleString("en-US", {
                             timeZone: "Asia/Jakarta",
