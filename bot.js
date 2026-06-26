@@ -16,6 +16,7 @@ const { StringSession } = require("telegram/sessions");
 const { NewMessage } = require("telegram/events");
 const input = require("input");
 const fs = require("fs");
+const getJakartaHour = require("./utils/jakartaHour")
 
 const apiId = Number(process.env.API_ID);
 const apiHash = process.env.API_HASH;
@@ -73,14 +74,6 @@ async function main() {
 
         const userId = sender.toString();
 
-        const jakartaHour = Number(
-        new Date().toLocaleString("en-US", {
-            timeZone: "Asia/Jakarta",
-            hour: "numeric",
-            hour12: false
-        })
-        );
-
         if (msg === "/status") {
             const status = userStatus[userId];
             const targetList = groups.map(g => `• ${g}`).join("\n");
@@ -125,13 +118,7 @@ async function main() {
             return;
         }
 
-        const jakartaHour = Number(
-            new Date().toLocaleString("en-US", {
-                timeZone: "Asia/Jakarta",
-                hour: "numeric",
-                hour12: false
-            })
-        );     
+        const jakartaHour = getJakartaHour()  
         
         if (jakartaHour >= 0 && jakartaHour < 7) {
             await event.message.reply({
@@ -170,13 +157,7 @@ async function main() {
             const channelEntity = await client.getEntity(channel);
 
             while (runningUsers[userId] === true) {
-                const jakartaHour = Number(
-                    new Date().toLocaleString("en-US", {
-                        timeZone: "Asia/Jakarta",
-                        hour: "numeric",
-                        hour12: false
-                    })
-                );
+                const jakartaHour = getJakartaHour()
                 
                 if (jakartaHour >= 0 && jakartaHour < 7) {
                     delete runningUsers[userId];
@@ -207,13 +188,8 @@ async function main() {
                         break;
                     }
 
-                    const jakartaHour = Number(
-                        new Date().toLocaleString("en-US", {
-                            timeZone: "Asia/Jakarta",
-                            hour: "numeric",
-                            hour12: false
-                        })
-                    );
+                const jakartaHour = getJakartaHour()
+
                 if (jakartaHour >= 0 && jakartaHour < 7) {
                     delete runningUsers[userId];
                     console.log("STOP OTOMATIS JAM 00");
