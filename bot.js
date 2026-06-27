@@ -156,6 +156,7 @@ async function main() {
             };
 
             const channelEntity = await client.getEntity(channel);
+            const currentToken = runningUsers[userId];
             while (runningUsers[userId] === currentToken) {
                 const jakartaHour = getJakartaHour()
                 
