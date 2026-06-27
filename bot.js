@@ -16,7 +16,7 @@ const { StringSession } = require("telegram/sessions");
 const { NewMessage } = require("telegram/events");
 const input = require("input");
 const fs = require("fs");
-const getJakartaHour = require("./utils/jakartaHour")
+const {getJakartaHour} = require("./utils/jakartaHour")
 
 const apiId = Number(process.env.API_ID);
 const apiHash = process.env.API_HASH;
@@ -133,7 +133,8 @@ async function main() {
         }
 
         if (!msg.includes("t.me")) return;
-        runningUsers[userId] = true;
+        const currentToken = Date.now().toString();
+        runningUsers[userId] = currentToken;
         console.log("START:", userId);
         console.log("RUNNING USERS:", runningUsers);
 
@@ -155,8 +156,7 @@ async function main() {
             };
 
             const channelEntity = await client.getEntity(channel);
-
-            while (runningUsers[userId] === true) {
+            while (runningUsers[userId] === currentToken) {
                 const jakartaHour = getJakartaHour()
                 
                 if (jakartaHour >= 0 && jakartaHour < 7) {
@@ -167,39 +167,39 @@ async function main() {
                     break;
                 }
                 for (const grp of groups) {
-                    if (!runningUsers[userId]) {
+                    if (runningUsers[userId] !== currentToken) {
                         console.log("STOP saat proses forward");
                         break;
                     }
                     const groupEntity = await client.getEntity(grp);
+                    if (runningUsers[userId] !== currentToken) break;
                     await client.forwardMessages(groupEntity, {
                         messages: [messageId],
                         fromPeer: channelEntity
                     });
+                    if (runningUsers[userId] !== currentToken) break;
                     await delay(25000);
                 }
-                if (!runningUsers[userId]) {
-                    console.log("STOP saat proses forward");
-                    break;
-                }
+                if (runningUsers[userId] !== currentToken) break;
+
                 for (let i = 0; i < delayLoop / 60000; i++) {
-                    if (!runningUsers[userId]) {
-                        console.log("STOP saat delay");
+                    if (runningUsers[userId] !== currentToken) break;
+
+                    await delay(60000);
+
+                    if (runningUsers[userId] !== currentToken) break;
+
+                    const jakartaHour = getJakartaHour()
+
+                    if (jakartaHour >= 0 && jakartaHour < 7) {
+                        delete runningUsers[userId];
+                        console.log("STOP OTOMATIS JAM 00");
+                        await event.message.reply({
+                            message: "Bot berhenti otomatis karena sudah jam 12 malam dan akan kembali share di jam 7 pagi!"
+                        });
                         break;
                     }
-
-                const jakartaHour = getJakartaHour()
-
-                if (jakartaHour >= 0 && jakartaHour < 7) {
-                    delete runningUsers[userId];
-                    console.log("STOP OTOMATIS JAM 00");
-                    await event.message.reply({
-                        message: "Bot berhenti otomatis karena sudah jam 12 malam dan akan kembali share di jam 7 pagi!"
-                    });
-                    break;
-                }
-                    await delay(60000);
-                }
+                    }
             }
             } catch (err) {
                 console.log("ERROR USER:", userId);

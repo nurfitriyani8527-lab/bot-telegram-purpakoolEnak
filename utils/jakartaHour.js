@@ -8,4 +8,4 @@ function getJakartaHour() {
     );
 }
 
-exports.module = getJakartaHour
+module.exports = { getJakartaHour };
