@@ -46,17 +46,17 @@ const userStatus = {};
 let delayLoop = 480000;
 
 async function main() {
-    await client.start({
-        phoneNumber: async () => await input.text("Nomor: "),
-        password: async () => await input.text("Password: "),
-        phoneCode: async () => await input.text("OTP: "),
-    });
-    console.log(client.session.save());
+    // await client.start({
+    //     phoneNumber: async () => await input.text("Nomor: "),
+    //     password: async () => await input.text("Password: "),
+    //     phoneCode: async () => await input.text("OTP: "),
+    // });
+    // console.log(client.session.save());
     console.log("Session exists:", fs.existsSync("session.txt"));
     console.log("Session length:", sessionData.length);
 
-    // await client.connect();
-    // console.log("Client connected 🚀");
+    await client.connect();
+    console.log("Client connected 🚀");
     // console.log("Me:", await client.getMe());
 
     console.log("Login berhasil!");
