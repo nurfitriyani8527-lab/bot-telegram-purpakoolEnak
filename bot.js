@@ -54,7 +54,7 @@ async function main() {
     // console.log(client.session.save());
     console.log("Session exists:", fs.existsSync("session.txt"));
     console.log("Session length:", sessionData.length);
-
+    console.log("ready")
     await client.connect();
     console.log("Client connected 🚀");
     // console.log("Me:", await client.getMe());
