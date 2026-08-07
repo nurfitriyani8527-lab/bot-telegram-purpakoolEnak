@@ -36,8 +36,9 @@ const client = new TelegramClient(
 );
 
 const groups = [
-    "adoptmeindooooo",
-    "adoptmeindosuper"
+    // "adoptmeindooooo",
+    "adoptmeindosuper",
+    "LPMADOPTMEROBLOX"
 ];
 
 const delay = (ms) => new Promise(res => setTimeout(res, ms));
