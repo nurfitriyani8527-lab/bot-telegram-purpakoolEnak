@@ -36,9 +36,8 @@ const client = new TelegramClient(
 );
 
 const groups = [
-    // "adoptmeindooooo",
+    "adoptmeindooooo",
     "adoptmeindosuper",
-    "LPMADOPTMEROBLOX"
 ];
 
 const delay = (ms) => new Promise(res => setTimeout(res, ms));
@@ -47,16 +46,16 @@ const userStatus = {};
 let delayLoop = 480000;
 
 async function main() {
-    // await client.start({
-    //     phoneNumber: async () => await input.text("Nomor: "),
-    //     password: async () => await input.text("Password: "),
-    //     phoneCode: async () => await input.text("OTP: "),
-    // });
-    // console.log(client.session.save());
+    await client.start({
+        phoneNumber: async () => await input.text("Nomor: "),
+        password: async () => await input.text("Password: "),
+        phoneCode: async () => await input.text("OTP: "),
+    });
+    console.log(client.session.save());
     console.log("Session exists:", fs.existsSync("session.txt"));
     console.log("Session length:", sessionData.length);
     console.log("ready")
-    await client.connect();
+    // await client.connect(); // kalau mau login ulang ini di comment
     console.log("Client connected 🚀");
     // console.log("Me:", await client.getMe());
 
