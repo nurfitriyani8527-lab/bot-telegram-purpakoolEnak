@@ -37,8 +37,7 @@ const client = new TelegramClient(
 
 const groups = [
     "adoptmeindooooo",
-    "adoptmeindosuper",
-    "lpmAdoptmeindon"
+    "adoptmeindosuper"
 ];
 
 const delay = (ms) => new Promise(res => setTimeout(res, ms));
