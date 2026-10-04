@@ -35,11 +35,11 @@ const client = new TelegramClient(
     { connectionRetries: 5 }
 );
 
-const groups = [
+const DEFAULT_GROUPS = [
     "adoptmeindooooo",
-    "adoptmeindosuper",
-    // "lpmAdoptmeindon"
+    "adoptmeindosuper"
 ];
+let groups = [...DEFAULT_GROUPS];
 
 const delay = (ms) => new Promise(res => setTimeout(res, ms));
 const runningUsers = {};
@@ -51,6 +51,7 @@ async function main() {
     //     phoneNumber: async () => await input.text("Nomor: "),
     //     password: async () => await input.text("Password: "),
     //     phoneCode: async () => await input.text("OTP: "),
+    //     onError: (err) => console.log(err),
     // });
     // console.log(client.session.save());
     console.log("Session exists:", fs.existsSync("session.txt"));
@@ -116,6 +117,48 @@ async function main() {
             console.log("STOP DARI:", userId);
             delete runningUsers[userId];
             console.log("RUNNING USERS:", runningUsers);
+            return;
+        }
+
+        if (msg === "/groups") {
+            const groupList = groups.length > 0 ? groups.map(g => `• @${g}`).join("\n") : "Tidak ada grup target.";
+            await event.message.reply({
+                message: `Daftar Grup Target Saat Ini:\n${groupList}`
+            });
+            return;
+        }
+
+        if (msg.startsWith("/group ")) {
+            const args = msg.split(" ");
+            const command = args[1];
+            
+            if (command === "add" && args[2]) {
+                const newGroup = args[2].replace("@", "");
+                if (!groups.includes(newGroup)) {
+                    groups.push(newGroup);
+                    await event.message.reply({ message: `✅ Grup @${newGroup} berhasil ditambahkan.` });
+                } else {
+                    await event.message.reply({ message: `⚠️ Grup @${newGroup} sudah ada di daftar.` });
+                }
+            } else if (command === "remove" && args[2]) {
+                const targetGroup = args[2].replace("@", "");
+                const index = groups.indexOf(targetGroup);
+                if (index !== -1) {
+                    groups.splice(index, 1);
+                    await event.message.reply({ message: `✅ Grup @${targetGroup} berhasil dihapus.` });
+                } else {
+                    await event.message.reply({ message: `⚠️ Grup @${targetGroup} tidak ditemukan.` });
+                }
+            } else if (command === "set" && args.length > 2) {
+                const newGroups = args.slice(2).map(g => g.replace("@", ""));
+                groups = newGroups;
+                await event.message.reply({ message: `✅ Daftar grup berhasil diperbarui:\n${groups.map(g => `• @${g}`).join("\n")}` });
+            } else if (command === "reset") {
+                groups = [...DEFAULT_GROUPS];
+                await event.message.reply({ message: `✅ Daftar grup dikembalikan ke default:\n${groups.map(g => `• @${g}`).join("\n")}` });
+            } else {
+                await event.message.reply({ message: "❌ Perintah tidak valid.\n\nGunakan:\n- /group add @nama\n- /group remove @nama\n- /group set @grup1 @grup2\n- /group reset" });
+            }
             return;
         }
 
