@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config(); // Load environment variables
 const express = require('express');
 const app = express();
 
@@ -216,6 +216,8 @@ async function main() {
 
             const channelEntity = await client.getEntity(channel);
 
+            const notifiedErrors = new Set(); // Track error agar tidak spam notif ke user setiap loop
+
             while (runningUsers[userId] === currentToken) {
                 const jakartaHour = getJakartaHour()
                 
@@ -231,15 +233,47 @@ async function main() {
                         console.log("STOP saat proses forward");
                         break;
                     }
-                    const groupEntity = await client.getEntity(grp);
-                    if (runningUsers[userId] !== currentToken) break;
                     
-                    console.log("MAU FORWARD KE:", grp);
-                    await client.forwardMessages(groupEntity, {
-                        messages: [messageId],
-                        fromPeer: channelEntity
-                    });
-                    console.log("BERHASIL FORWARD KE:", grp);
+                    try {
+                        const groupEntity = await client.getEntity(grp);
+                        if (runningUsers[userId] !== currentToken) break;
+                        
+                        console.log("MAU FORWARD KE:", grp);
+                        await client.forwardMessages(groupEntity, {
+                            messages: [messageId],
+                            fromPeer: channelEntity
+                        });
+                        console.log("BERHASIL FORWARD KE:", grp);
+                        notifiedErrors.delete(grp); // Hapus dari daftar error jika sudah berhasil
+                    } catch (forwardErr) {
+                        console.log(`GAGAL FORWARD KE: ${grp} | Error: ${forwardErr.message}`);
+                        
+                        if (!notifiedErrors.has(grp)) {
+                            let errMsg = forwardErr.message || "";
+                            let userFriendlyMessage = `⚠️ Gagal forward ke grup @${grp}.\n`;
+
+                            if (errMsg.includes("CHAT_WRITE_FORBIDDEN") || errMsg.includes("write in this chat")) {
+                                userFriendlyMessage += "❌ Akun ini tidak memiliki akses untuk mengirim pesan di grup tersebut (mungkin kena mute atau ban).";
+                            } else if (errMsg.includes("Could not find the input entity") || errMsg.includes("USERNAME_NOT_OCCUPIED") || errMsg.includes("Nobody is using this username")) {
+                                userFriendlyMessage += "🔍 Grup tidak ditemukan. Pastikan username grup benar dan akun ini sudah bergabung di grup tersebut.";
+                            } else if (errMsg.includes("CHANNEL_PRIVATE") || errMsg.includes("ChannelPrivateError") || errMsg.includes("banned from")) {
+                                userFriendlyMessage += "🚫 Grup bersifat privat atau akun ini telah dikeluarkan/diban dari grup.";
+                            } else if (errMsg.includes("SLOWMODE_WAIT")) {
+                                userFriendlyMessage += `⏳ Grup mengaktifkan slow mode.`;
+                            } else {
+                                userFriendlyMessage += `❗️ Error: ${errMsg}`;
+                            }
+
+                            // Kirim notifikasi ke user
+                            try {
+                                await client.sendMessage(userId, { message: userFriendlyMessage });
+                                notifiedErrors.add(grp); // Tandai agar tidak dikirim berulang-ulang setiap loop
+                            } catch (notifyErr) {
+                                console.log("Gagal mengirim notif error ke user:", notifyErr.message);
+                            }
+                        }
+                        // Skip ke grup berikutnya tanpa menghentikan bot
+                    }
 
                     if (runningUsers[userId] !== currentToken) break;
                     await delay(25000);
@@ -268,6 +302,13 @@ async function main() {
             } catch (err) {
                 console.log("ERROR USER:", userId);
                 console.log(err);
+                
+                try {
+                    await client.sendMessage(userId, { message: `❗️ Terjadi kesalahan sistem saat memproses perintah:\n${err.message}\n\nProses share dihentikan.` });
+                } catch (notifyErr) {
+                    console.log("Gagal kirim pesan error outer:", notifyErr.message);
+                }
+
                 delete runningUsers[userId];
             }
 
