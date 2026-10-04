@@ -2,6 +2,14 @@ require("dotenv").config();
 const express = require('express');
 const app = express();
 
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 app.get('/', (req, res) => {
   res.send('Bot is active!');
 });
@@ -32,7 +40,10 @@ const client = new TelegramClient(
     new StringSession(sessionData),
     apiId,
     apiHash,
-    { connectionRetries: 5 }
+    { 
+        connectionRetries: 5,
+        useWSS: true
+    }
 );
 
 const DEFAULT_GROUPS = [
